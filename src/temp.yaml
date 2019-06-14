@@ -1,0 +1,28 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: A sample template
+Parameters:
+  Greeting:
+    Type: String
+    Default: Hello World
+  LatestAMI:
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Default: "/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2" 
+  PROD_DB_PWORD:
+    Type: AWS::SSM::Parameter::Value<String>
+    Def 
+Resources:
+  ApacheInstance:
+    Type: "AWS::EC2::Instance"
+    Properties:
+      ImageId: ami-f973ab84
+      InstanceType: t2.micro
+      KeyName: north-v-kp
+      UserData:
+        "Fn::Base64":
+          !Sub |
+            #!/bin/bash
+            yum -y update
+            yum install -y httpd # install apache
+            chkconfig service httpd on
+            service httpd start
+            echo $Greeting>/var/www/html/index.html
